@@ -57,9 +57,10 @@ describe("The StatisticsPanel module: ", function() {
   });
 
   it("scans all websites in tracking list, asking for data over amplitude seconds, processing it then printing it", function() {
+    const consoleInfoStub = this.sandbox.stub(console, 'info');
     const getOverStub = this.sandbox.stub(DataService.prototype, 'getOver').returns([{}]);
     const processDataStub = this.sandbox.stub(StatisticsPanel.prototype, 'processData').returns({});
-    const printStatisticStub = this.sandbox.stub(StatisticsPanel.prototype, 'printStatistic');
+    const prettyStatisticsStub = this.sandbox.stub(StatisticsPanel.prototype, 'prettyStatistics').returns("pretty");
     const dummyDataService = new DataService();
     var statisticsPanel = new StatisticsPanel(dummyDataService);
 
@@ -68,7 +69,8 @@ describe("The StatisticsPanel module: ", function() {
 
     expect(getOverStub).to.have.callCount(0);
     expect(processDataStub).to.have.callCount(0);
-    expect(printStatisticStub).to.have.callCount(0);
+    expect(prettyStatisticsStub).to.have.callCount(0);
+    expect(consoleInfoStub).to.have.callCount(2)
 
     statisticsPanel.trackedWebsites = ["www.google.com", "www.test.com"];
     statisticsPanel.scanAll(100);
@@ -77,8 +79,10 @@ describe("The StatisticsPanel module: ", function() {
     expect(getOverStub).to.have.been.calledWith("www.test.com", 100);
     expect(processDataStub).to.have.callCount(2);
     expect(processDataStub).to.have.been.calledWith([{}]);
-    expect(printStatisticStub).to.have.callCount(2);
-    expect(printStatisticStub).to.have.been.calledWith("www.test.com", 100, {});
+    expect(prettyStatisticsStub).to.have.callCount(2);
+    expect(prettyStatisticsStub).to.have.been.calledWith("www.test.com", 100, {});
+    expect(consoleInfoStub).to.have.callCount(6);
+    expect(consoleInfoStub).to.have.been.calledWith("   pretty"); // three spaces before
   });
 
   it("processes the data from the database into actual stats", function() {
@@ -159,8 +163,7 @@ describe("The StatisticsPanel module: ", function() {
     expect(noSuccessTest).to.deep.equal(noSuccessResult);
   });
 
-  it("prints a (pretty!) info line", function() {
-    const consoleInfoStub = this.sandbox.stub(console, 'info')
+  it("creates a (pretty!) info line", function() {
     const dummyDataService = new DataService();
     const test = {
       availability: 0.4562,
@@ -196,11 +199,11 @@ describe("The StatisticsPanel module: ", function() {
       + "max success time=" + "NO_DATA" + " | "
       + "min success time=" + "NO_DATA";
 
-    statisticsPanel.printStatistic(url, amplitude, test);
-    expect(consoleInfoStub).to.have.been.calledWith(expectedString);
+    var firstTest = statisticsPanel.prettyStatistics(url, amplitude, test);
+    expect(firstTest).to.be.equal(expectedString);
 
-    statisticsPanel.printStatistic(url, amplitude, emptyTest);
-    expect(consoleInfoStub).to.have.been.calledWith(expectedEmptyResult);
+    var secondTest = statisticsPanel.prettyStatistics(url, amplitude, emptyTest);
+    expect(secondTest).to.be.equal(expectedEmptyResult);
   });
 
   it("sets up a scan interval for each element in the scan list", function() {
