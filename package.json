@@ -1,0 +1,25 @@
+{
+  "name": "website_monitor",
+  "version": "1.0.0",
+  "description": "simple monitoring of website",
+  "author": "Nicolas Couvrat <nicolas.couvrat@mines-paristech.fr>",
+  "main": "app.js",
+  "scripts": {
+    "test": "nyc mocha test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-libcurl": "^1.2.0",
+    "queue-fifo": "^0.2.3"
+  },
+  "test-unit": "NODE_ENV=test mocha '/**/*.spec.js'",
+  "devDependencies": {
+    "debug": "^3.1.0",
+    "nyc": "^11.3.0",
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1",
+    "sinon": "^4.1.2",
+    "sinon-chai": "^2.14.0"
+  }
+}
