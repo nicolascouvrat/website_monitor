@@ -53,8 +53,16 @@ exports.help = function() {
     + " (see documentation for optional parameters)\n");
   // .startStatistics
   console.info("   .startStatistics() -- starts printing statistics for the tracked websites\n");
+  // .stopStatistics
+  console.info("   .stopStatistics() -- stops printing statistics\n");
+  // .resumeStatistics
+  console.info("   .resumeStatistics() -- restarts printings statistics\n");
+  // .resetStatistics
+  console.info("   .resetStatistics()  -- destroys the current statistics panel and creates a new one\n");
   // .getWatchedList
   console.info("   .getWatchedList() -- list of currently watched urls\n");
+  // .track
+  console.info("   .track(url) -- registers url for statistics panel's scans. Does nothing if this url is not watched. \n")
   // options getter
   console.info("   .getOptions() -- list of current app-wide options"
     + " (use .getDefaultOptions() to see defaults)\n")
@@ -64,7 +72,7 @@ exports.help = function() {
   console.info("   .setWatchOption(option, value) -- sets watch option 'option' to"
     + " value 'value' (use '.' to access nested options)\n");
   console.info("   .setStatsOption(option, value) -- identical to .setWatchOption()"
-    + " but for statistics panel options. Require .restartStatistics() to be effective\n");
+    + " but for statistics panel options. Require .resetStatistics() for changes to be effective\n");
 
 
   // .help
@@ -104,6 +112,21 @@ exports.startStatistics = function() {
   console.info("Statistics service now online");
 }
 
+exports.stopStatistics = function() {
+  statisticsPanel.stop();
+  console.info("Statistics service offline");
+}
+
+exports.resumeStatistics = function() {
+  statisticsPanel.resume();
+  console.info("Statistics service resumed");
+}
+
+exports.resetStatistics = function() {
+  init();
+  console.info("The statistics panel has been reset with application-wide options");
+}
+
 exports.watch = function(url, tick, delayedTracking, options) {
   delayedTracking = delayedTracking || false;
   // specifying options will overwrite default options
@@ -118,6 +141,11 @@ exports.watch = function(url, tick, delayedTracking, options) {
     // we instantly register website for stats tracking
     statisticsPanel.track(url);
   }
+}
+
+exports.track = function(url) {
+  statisticsPanel.track(url);
+  console.info("Url {" + url + "} has been registered for tracking");
 }
 
 exports.getWatchedList = function() {
@@ -184,4 +212,4 @@ console.info("done.")
 console.info("Initial setup...");
 init();
 console.info("done.")
-console.info("Welcome to the website monitor. Use .help for a list of commands.");
+console.info("Welcome to the website monitor. Use .help() for a list of commands.");
