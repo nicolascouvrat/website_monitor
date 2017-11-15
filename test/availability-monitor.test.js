@@ -97,7 +97,8 @@ describe("The AvailabilityMonitor module: ", function() {
     .get(function() {
       return 0.77777;
     });
-    const consoleErrorStub = this.sandbox.stub(console, 'error');
+    const saveInFileStub = this.sandbox.stub(AvailabilityMonitor.prototype, 'saveInFile')
+    const consoleInfoStub = this.sandbox.stub(console, 'info');
     this.clock = sinon.useFakeTimers(now);
     var availabilityMonitor = new AvailabilityMonitor("www.google.com");
 
@@ -107,18 +108,26 @@ describe("The AvailabilityMonitor module: ", function() {
       + ")";
 
     availabilityMonitor.raiseAlert();
-    expect(consoleErrorStub).to.have.been.calledWith(string);
+    expect(consoleInfoStub).to.have.been.calledWith(string);
+    //saveFile true by default
+    expect(saveInFileStub).to.have.been.calledWith(string);
+
+    availabilityMonitor.saveToFile = false;
+    availabilityMonitor.raiseAlert();
+    expect(consoleInfoStub).to.have.callCount(2);
+    expect(saveInFileStub).to.have.callCount(1);
 
     this.clock.restore();
   });
 
-  it ("prints (a pretty!) info message", function() {
+  it ("prints (a pretty!) info message and saves it if told to do so", function() {
     var now = new Date();
     const getAvailabilityStub = this.sandbox.stub(AvailabilityMonitor.prototype, 'availability')
     .get(function() {
       return 0.7;
     });
     const consoleInfoStub = this.sandbox.stub(console, 'info');
+    const saveInFileStub = this.sandbox.stub(AvailabilityMonitor.prototype, 'saveInFile')
     this.clock = sinon.useFakeTimers(now);
     var availabilityMonitor = new AvailabilityMonitor("www.google.com");
 
@@ -129,7 +138,22 @@ describe("The AvailabilityMonitor module: ", function() {
 
     availabilityMonitor.resolveAlert();
     expect(consoleInfoStub).to.have.been.calledWith(string);
+    // saveTofile true by default
+    expect(saveInFileStub).to.have.been.calledWith(string);
+
+    availabilityMonitor.saveToFile = false;
+    availabilityMonitor.resolveAlert();
+    expect(consoleInfoStub).to.have.callCount(2);
+    expect(saveInFileStub).to.have.callCount(1);
 
     this.clock.restore();
+  });
+
+  it("trims an url to make it a valid LINUX file name", function() {
+    var availabilityMonitor = new AvailabilityMonitor("www.google.com");
+    var url = "http://this.is/a/long/url";
+    var expectedResult = "this.is_a_long_url";
+
+    expect(availabilityMonitor.trimUrl(url)).to.be.equal(expectedResult);
   })
 })
