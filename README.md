@@ -84,7 +84,23 @@ To save space, the `MockDatabase` module implements a queue storage, to limit th
     `options` can be specified, even partially (the remaining will default to **default options**, not application-wide options), and will override other options for that specific website
 
 * ### .startStatistics()
-    orders the statisticsPanel to start printing out messages
+    orders the StatisticsPanel to start printing out messages
+
+* ### .stopStatistics()
+    orders the StatisticsPanel to stop printing messages
+
+* ### .resumeStatistics()
+    see `.startStatistics()`
+
+* ### .resetStatistics(keepTrack)
+    stops the current StatisticsPanel to set up a new one with the current application-wide options. Note that the panel must then be restarted using `.startStatistics()`
+    if `keepTrack` is set to true, then the list of tracked websites is ported to the new Statistics Panel (default: false)
+
+* ### .track(url)
+    registers `url` for the statistics panel's scans. Does nothing if `url` is not currently watched, making this command effectively useful only if a website has been watched with `delayTracking` set to `true` or after a reset with `keepTrack` set to `false`
+
+* ### .addScan(delay, amplitude)
+    requests a new statistics scan, using data over the last `amplitude` seconds every `delay` seconds, starting from the call to this command (meaning not necessarily synchronized with other scans)
 
 * ### .getWatchedList()
     prints all currently watched URLs
@@ -97,6 +113,7 @@ To save space, the `MockDatabase` module implements a queue storage, to limit th
 
 * ### .setWatchOption(option, value) _and_ .setStatsOption(option, value)
     sets **application-wide** options, be it for watching or statistics, of `option` to `value`. Nested options can be accessed using the '.' separator (e.g. `.setWatchOption("requestOptions.timeout", 5000)`).
+    **note:** a change it stats options will only be effective after a `.restartStatistics()`
 
 * ### .help()
     prints useful information
@@ -151,4 +168,4 @@ Other improvements that could be made
 * Quality of life -- a better console display (using some colors?), that can be run directly in the shell could be made out of the current Node.js console only application.
 
 
-_revision 1.0, 2017/11/15_ 
+_revision 1.0, 2017/11/15_

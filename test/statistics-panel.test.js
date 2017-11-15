@@ -225,6 +225,39 @@ describe("The StatisticsPanel module: ", function() {
     statisticsPanel.start();
     expect(setAllIntervalsStub).to.have.callCount(2);
     expect(setAllIntervalsStub).to.have.been.calledWith(80, 400);
+  });
+
+  it("stops scanning", function() {
+    const dummyDataService = new DataService();
+    var count = 0;
+    var now = new Date();
+    this.clock = sinon.useFakeTimers(now);
+    var statisticsPanel = new StatisticsPanel(dummyDataService)
+    var dummyIntervalOne = setInterval(() => count +=1, 1);
+    var dummyIntervalTwo = setInterval(() => count +=1, 1);
+
+    statisticsPanel.intervalList = [
+      dummyIntervalOne,
+      dummyIntervalTwo
+    ];
+
+    statisticsPanel.stop();
+    this.clock.tick(1);
+
+    expect(count).to.be.equal(0);
+    expect(statisticsPanel.intervalList).to.deep.equal([]);
+
+    this.clock.restore();
+  });
+
+  it("resumes scanning", function() {
+    const dummyDataService = new DataService();
+    const startStub = this.sandbox.stub(StatisticsPanel.prototype, 'start');
+    var statisticsPanel = new StatisticsPanel(dummyDataService);
+
+    statisticsPanel.resume();
+
+    expect(startStub).to.have.been.calledOnce;
   })
 
 })
