@@ -13,7 +13,7 @@ Besides, the application also stores request-related metrics and computes basic 
 
 ## Basic usage
 
-**IMPORTANT** the app uses the [queue-fifo](https://www.npmjs.com/package/queue-fifo) module based on a **custom version** of [dbly-linked-list](https://www.npmjs.com/package/dbly-linked-list) that is available on [this repo](https://github.com/nicolascouvrat/doubly-linked-list) (currently waiting for an answer to a pull request)
+the app uses the [queue-fifo](https://www.npmjs.com/package/queue-fifo) module based on a **custom version** of [dbly-linked-list](https://www.npmjs.com/package/dbly-linked-list) (now available in the above repository as of **v0.2.0**)
 
 The app can be launched from the Node.js console simply by calling
 
